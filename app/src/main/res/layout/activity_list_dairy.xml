@@ -29,6 +29,7 @@
                 android:gravity="center"
                 android:text="@string/bottom_bar_cancel"
                 android:background="@color/colorCancel"
+                android:id="@+id/tv_list_dairy_cancel"
                 android:textSize="30dp"/>
     </LinearLayout>
 
