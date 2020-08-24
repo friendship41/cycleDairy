@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">cycleDairy</string>
+    <string name="bottom_bar_now">NOW</string>
+    <string name="bottom_bar_list">LIST</string>
+    <string name="bottom_bar_new">NEW</string>
+    <string name="bottom_bar_ok">OK</string>
+    <string name="bottom_bar_cancel">CANCEL</string>
 </resources>
