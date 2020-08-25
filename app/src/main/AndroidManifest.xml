@@ -13,10 +13,6 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
 
-        <meta-data
-            android:name="com.kakao.sdk.AppKey"
-            android:value="550ee1ab2a7332def7d3a9f9a5296e18"/>
-
         <activity android:name=".activity.ListDairyActivity">
         </activity>
         <activity android:name=".activity.NewDairyActivity">

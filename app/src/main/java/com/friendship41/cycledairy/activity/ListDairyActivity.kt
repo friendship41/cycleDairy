@@ -1,9 +1,9 @@
 package com.friendship41.cycledairy.activity
 
 import android.os.Bundle
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.friendship41.cycledairy.R
+import kotlinx.android.synthetic.main.activity_list_dairy.*
 
 class ListDairyActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -11,7 +11,7 @@ class ListDairyActivity : AppCompatActivity() {
         setContentView(R.layout.activity_list_dairy)
 
         // cancel 버튼
-        findViewById<TextView>(R.id.tv_list_dairy_cancel).setOnClickListener {
+        tv_list_dairy_cancel.setOnClickListener{
             finish()
         }
     }
