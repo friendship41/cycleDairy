@@ -6,7 +6,7 @@
     <string name="bottom_bar_ok">OK</string>
     <string name="bottom_bar_cancel">CANCEL</string>
 
-    <string name="new_dairy_place_now">현재위치</string>
+    <string name="new_dairy_place_now">출발지</string>
     <string name="new_dairy_place_to">목적지</string>
     <string name="new_dairy_search">검색</string>
 </resources>

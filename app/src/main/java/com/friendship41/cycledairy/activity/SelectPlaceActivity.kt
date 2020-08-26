@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import com.friendship41.cycledairy.R
+import com.friendship41.cycledairy.common.*
 import kotlinx.android.synthetic.main.activity_select_place.*
 
 class SelectPlaceActivity : AppCompatActivity() {

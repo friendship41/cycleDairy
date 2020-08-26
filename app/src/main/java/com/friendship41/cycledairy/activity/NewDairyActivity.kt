@@ -1,13 +1,25 @@
 package com.friendship41.cycledairy.activity
 
+import android.Manifest
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
 import android.os.Parcelable
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.friendship41.cycledairy.R
+import com.friendship41.cycledairy.common.REQUEST_PERMISSION_ACCESS_FINE_LOCATION
+import com.friendship41.cycledairy.common.RESULT_CODE_SUCCESS
+import com.friendship41.cycledairy.common.SELECT_PLACE_NOW_REQUEST_CODE
+import com.friendship41.cycledairy.common.SELECT_PLACE_TO_REQUEST_CODE
 import com.skt.Tmap.TMapData
 import com.skt.Tmap.TMapMarkerItem
 import com.skt.Tmap.TMapPoint
@@ -16,23 +28,62 @@ import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.activity_new_dairy.*
 import java.util.logging.Logger
 
-const val SELECT_PLACE_NOW_REQUEST_CODE = 100
-const val SELECT_PLACE_TO_REQUEST_CODE = 101
-const val RESULT_CODE_SUCCESS = 200
 
 class NewDairyActivity : AppCompatActivity() {
     private val log = Logger.getLogger(NewDairyActivity::class.java.name)
 
     private lateinit var tMapView: TMapView
+    private var locationManager: LocationManager? = null
+    private var locationNow: Location? = null
+    private var locationPermission = PackageManager.PERMISSION_DENIED
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_dairy)
 
         tMapView = TMapView(this)
+        // 맵 뷰
+        tMapView.setSKTMapApiKey("l7xx575320139307413f9dd8196bf0803245")
+        new_dairy_map_view.addView(tMapView)
+
+        // 위치권한 체크 및 현재위치 불러와서 세팅
+        locationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+        if (locationPermission == PackageManager.PERMISSION_GRANTED) {
+            locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            locationManager?.requestLocationUpdates(
+                LocationManager.NETWORK_PROVIDER,
+                1000L,
+                10f,
+                locationListener
+            )
+            locationNow = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+            if (locationNow != null) {
+                tMapView.setCenterPoint(locationNow!!.longitude, locationNow!!.latitude)
+            }
+        } else {
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    REQUEST_PERMISSION_ACCESS_FINE_LOCATION)
+            }
+        }
+
+
+        // tMap Data
+        val tMapData = TMapData()
 
         // TODO: ok 버튼
         tv_new_dairy_ok.setOnClickListener {
+//            val pinNow = tMapView.getMarkerItemFromID("pinNow") ?: null
+//            val pinTo = tMapView.getMarkerItemFromID("pinTo") ?: null
+//
+//            if (pinNow == null) {
+//
+//            }
+//
+//            val okIntent = Intent()
+//            setResult(RESULT_CODE_SUCCESS)
         }
 
         // cancel 버튼
@@ -40,15 +91,7 @@ class NewDairyActivity : AppCompatActivity() {
             finish()
         }
 
-        // 맵 뷰
-        tMapView.setSKTMapApiKey("l7xx575320139307413f9dd8196bf0803245")
-        new_dairy_map_view.addView(tMapView)
-
-
-        // tMap Data
-        val tMapData = TMapData()
-
-        // 현재위치 검색
+        // 현재위치 검색버튼
         btn_new_dairy_place_now.setOnClickListener {
             if (edt_new_dairy_place_now.text.toString() == "") {
                 Toast.makeText(this, "검색어를 입력해주세요", Toast.LENGTH_SHORT).show()
@@ -88,7 +131,8 @@ class NewDairyActivity : AppCompatActivity() {
                     "pinNow",
                     tMapView,
                     data?.getParcelableExtra("selectedPOI"),
-                    edt_new_dairy_place_now
+                    edt_new_dairy_place_now,
+                    R.drawable.map_pin_red_icon
                 )
             }
             SELECT_PLACE_TO_REQUEST_CODE -> {
@@ -96,33 +140,66 @@ class NewDairyActivity : AppCompatActivity() {
                     "pinTo",
                     tMapView,
                     data?.getParcelableExtra("selectedPOI"),
-                    edt_new_dairy_place_to)
+                    edt_new_dairy_place_to,
+                    R.drawable.map_pin_blue_icon
+                )
             }
             else -> log.info("잘못된 requestCode -> requestCode: ${requestCode}, resultCode: ${resultCode}, data: $data")
         }
     }
 
-    private fun addMarkerItemToView(markerId: String, tMapView: TMapView, poi: ParcelablePOI?) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            REQUEST_PERMISSION_ACCESS_FINE_LOCATION -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                    locationManager?.requestLocationUpdates(
+                        LocationManager.NETWORK_PROVIDER,
+                        1000L,
+                        10f,
+                        locationListener
+                    )
+                    locationNow = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER) as Location
+                    if (locationNow != null) {
+                        tMapView.setCenterPoint(locationNow!!.longitude, locationNow!!.latitude)
+                    }
+                }
+            }
+        }
+    }
+
+    private val locationListener: LocationListener = object : LocationListener {
+        override fun onLocationChanged(location: Location) {
+            locationNow = location
+        }
+        override fun onProviderEnabled(provider: String) {}
+        override fun onProviderDisabled(provider: String) {}
+    }
+
+    private fun addMarkerItemToView(markerId: String, tMapView: TMapView, poi: ParcelablePOI?, iconFileId: Int) {
         if (poi == null) {
             log.warning("잘못된 poi 값이 들아옴")
             return
         }
         log.info("선택된 poi: $poi")
         tMapView.removeMarkerItem(markerId)
-        tMapView.addMarkerItem(markerId, getTMapMarker(this, poi))
+        tMapView.addMarkerItem(markerId, getTMapMarker(this, poi, iconFileId))
         tMapView.setCenterPoint(poi.lon.toDouble(), poi.lat.toDouble())
     }
-    private fun addMarkerItemToView(markerId: String, tMapView: TMapView, poi: ParcelablePOI?, editText: EditText) {
-        addMarkerItemToView(markerId, tMapView, poi)
+    private fun addMarkerItemToView(markerId: String, tMapView: TMapView, poi: ParcelablePOI?, editText: EditText, iconFileId: Int) {
+        addMarkerItemToView(markerId, tMapView, poi, iconFileId)
         editText.setText(poi?.name ?: "")
     }
 }
 
+/**
+ * 책임: Tmap의 검색통신을 담당
+ */
 class SearchService constructor(
     private val searchWord: String,
     private val tMapData: TMapData,
     private val context: AppCompatActivity,
-    private val requestCode: Int) : Runnable {
+    private val requestCode: Int) :  Runnable {
     override fun run() {
         val poiList: ArrayList<ParcelablePOI> = ArrayList()
         tMapData.findTitlePOI(searchWord)?.map {
@@ -139,13 +216,16 @@ class SearchService constructor(
     }
 }
 
-fun getTMapMarker(context: AppCompatActivity, poi: ParcelablePOI): TMapMarkerItem {
+/**
+ * 기능: tMap 마커를 생성
+ */
+fun getTMapMarker(context: AppCompatActivity, poi: ParcelablePOI, iconFileId: Int): TMapMarkerItem {
     val markerItem = TMapMarkerItem()
     val option = BitmapFactory.Options()
-    option.inSampleSize = 12
+    option.inSampleSize = 3
     markerItem.icon = BitmapFactory.decodeResource(
         context.resources,
-        R.drawable.map_icon_red_305x400,
+        iconFileId,
         option)
     markerItem.setPosition(0.5f, 0.5f)
     markerItem.tMapPoint = TMapPoint(poi.lat.toDouble(), poi.lon.toDouble())
@@ -153,6 +233,9 @@ fun getTMapMarker(context: AppCompatActivity, poi: ParcelablePOI): TMapMarkerIte
     return markerItem
 }
 
+/**
+ * activity 이동을 위한 Parcelable POI
+ */
 @Parcelize
 data class ParcelablePOI(
     val id: String,
