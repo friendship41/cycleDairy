@@ -11,7 +11,7 @@ class SelectPlaceActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_select_place)
 
-        val bundle: Bundle? = intent.extras
+        intent.extras
         val poiList = intent.getParcelableArrayListExtra<ParcelablePOI>("poiList")
         val stringList = poiList?.map {
             it.name
@@ -27,7 +27,7 @@ class SelectPlaceActivity : AppCompatActivity() {
 
         lv_select_place_poi.setOnItemClickListener { _, _, position, _ ->
             intent.putExtra("selectedPOI", poiList?.get(position) as ParcelablePOI)
-            setResult(SELECT_PLACE_RESULT_CODE_SUCCESS, intent)
+            setResult(RESULT_CODE_SUCCESS, intent)
             finish()
         }
     }
