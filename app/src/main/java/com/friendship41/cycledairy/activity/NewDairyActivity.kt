@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.text.set
 import com.friendship41.cycledairy.R
 import com.skt.Tmap.TMapData
 import com.skt.Tmap.TMapView
@@ -18,6 +17,8 @@ const val SELECT_PLACE_RESULT_CODE_SUCCESS = 200
 class NewDairyActivity : AppCompatActivity() {
     private val log = Logger.getLogger(NewDairyActivity::class.java.name)
     private var selectedNowPoi: ParcelablePOI? = null
+
+    private val tMapView = TMapView(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +36,6 @@ class NewDairyActivity : AppCompatActivity() {
         }
 
         // 맵 뷰
-        val tMapView = TMapView(this)
         tMapView.setSKTMapApiKey("l7xx575320139307413f9dd8196bf0803245")
         new_dairy_map_view.addView(tMapView)
 
@@ -59,8 +59,10 @@ class NewDairyActivity : AppCompatActivity() {
                     log.warning("잘못된 값이 돌아옴: $poi")
                     return
                 }
+                log.info("선택된 poi: $poi")
                 edt_new_dairy_place_now.setText(poi.name)
                 selectedNowPoi = poi
+                setPositionToTMapView(tMapView, poi)
             } else {
                 log.info("잘못된 response -> requestCode: ${requestCode}, resultCode: ${resultCode}, data: $data")
             }
@@ -70,11 +72,11 @@ class NewDairyActivity : AppCompatActivity() {
     }
 }
 
-class SearchService constructor(val searchWord: String, val tMapData: TMapData, val context: AppCompatActivity) : Runnable {
+class SearchService constructor(private val searchWord: String, private val tMapData: TMapData, private val context: AppCompatActivity) : Runnable {
     override fun run() {
         val poiList: ArrayList<ParcelablePOI> = ArrayList()
         tMapData.findTitlePOI(searchWord).map {
-            ParcelablePOI(it.id, it.name, it.noorLat , it.noorLon, it.detailAddrName ?: "")
+            ParcelablePOI(it.id, it.name, it.noorLat , it.noorLon)
         }.toCollection(poiList)
 
         val selectPlaceIntent = Intent(context, SelectPlaceActivity::class.java)
@@ -83,12 +85,15 @@ class SearchService constructor(val searchWord: String, val tMapData: TMapData, 
     }
 }
 
+fun setPositionToTMapView(tMapView: TMapView, poi: ParcelablePOI) {
+
+}
+
 @Parcelize
 data class ParcelablePOI(
     val id: String,
     val name: String,
     val lat: String,
-    val lon: String,
-    val fullName: String
+    val lon: String
 ) : Parcelable
 
