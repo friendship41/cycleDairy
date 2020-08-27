@@ -159,7 +159,7 @@ class NewDairyActivity : AppCompatActivity() {
                         10f,
                         locationListener
                     )
-                    locationNow = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER) as Location
+                    locationNow = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
                     if (locationNow != null) {
                         tMapView.setCenterPoint(locationNow!!.longitude, locationNow!!.latitude)
                     }
