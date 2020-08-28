@@ -43,12 +43,22 @@ class MainActivity : AppCompatActivity() {
             locationManager?.requestLocationUpdates(
                 LocationManager.NETWORK_PROVIDER,
                 1000L,
-                10f,
+                1f,
                 locationListener
             )
             locationNow = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
             if (locationNow != null) {
                 tMapView.setCenterPoint(locationNow!!.longitude, locationNow!!.latitude)
+                tMapView.removeMarkerItem("currentLocation")
+                tMapView.addMarkerItem("currentLocation", getTMapMarker(
+                    this,
+                    ParcelablePOI(
+                        "main",
+                        "currentLoction",
+                        "${locationNow!!.latitude}",
+                        "${locationNow!!.longitude}"),
+                    R.drawable.current_location_icon,
+                    16))
             }
         } else {
             if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -82,7 +92,7 @@ class MainActivity : AppCompatActivity() {
                     locationManager?.requestLocationUpdates(
                         LocationManager.NETWORK_PROVIDER,
                         1000L,
-                        10f,
+                        1f,
                         locationListener
                     )
                     locationNow = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
@@ -96,7 +106,8 @@ class MainActivity : AppCompatActivity() {
                                 "currentLoction",
                                 "${locationNow!!.latitude}",
                                 "${locationNow!!.longitude}"),
-                            R.drawable.current_location_icon))
+                            R.drawable.current_location_icon,
+                            16))
                     }
                 }
             }

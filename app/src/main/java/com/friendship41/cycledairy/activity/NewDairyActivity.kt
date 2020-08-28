@@ -183,7 +183,7 @@ class NewDairyActivity : AppCompatActivity() {
         }
         log.info("선택된 poi: $poi")
         tMapView.removeMarkerItem(markerId)
-        tMapView.addMarkerItem(markerId, getTMapMarker(this, poi, iconFileId))
+        tMapView.addMarkerItem(markerId, getTMapMarker(this, poi, iconFileId, 3))
         tMapView.setCenterPoint(poi.lon.toDouble(), poi.lat.toDouble())
     }
     private fun addMarkerItemToView(markerId: String, tMapView: TMapView, poi: ParcelablePOI?, editText: EditText, iconFileId: Int) {
@@ -219,10 +219,10 @@ class SearchService constructor(
 /**
  * 기능: tMap 마커를 생성
  */
-fun getTMapMarker(context: AppCompatActivity, poi: ParcelablePOI, iconFileId: Int): TMapMarkerItem {
+fun getTMapMarker(context: AppCompatActivity, poi: ParcelablePOI, iconFileId: Int, inSampleSize: Int): TMapMarkerItem {
     val markerItem = TMapMarkerItem()
     val option = BitmapFactory.Options()
-    option.inSampleSize = 3
+    option.inSampleSize = inSampleSize
     markerItem.icon = BitmapFactory.decodeResource(
         context.resources,
         iconFileId,
