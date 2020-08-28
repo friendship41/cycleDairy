@@ -16,10 +16,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.friendship41.cycledairy.R
-import com.friendship41.cycledairy.common.REQUEST_PERMISSION_ACCESS_FINE_LOCATION
-import com.friendship41.cycledairy.common.RESULT_CODE_SUCCESS
-import com.friendship41.cycledairy.common.SELECT_PLACE_NOW_REQUEST_CODE
-import com.friendship41.cycledairy.common.SELECT_PLACE_TO_REQUEST_CODE
+import com.friendship41.cycledairy.common.*
+import com.friendship41.cycledairy.data.DairyRecord
 import com.skt.Tmap.TMapData
 import com.skt.Tmap.TMapMarkerItem
 import com.skt.Tmap.TMapPoint
@@ -75,15 +73,33 @@ class NewDairyActivity : AppCompatActivity() {
 
         // TODO: ok 버튼
         tv_new_dairy_ok.setOnClickListener {
-//            val pinNow = tMapView.getMarkerItemFromID("pinNow") ?: null
-//            val pinTo = tMapView.getMarkerItemFromID("pinTo") ?: null
-//
-//            if (pinNow == null) {
-//
-//            }
-//
-//            val okIntent = Intent()
-//            setResult(RESULT_CODE_SUCCESS)
+            val pinFrom = tMapView.getMarkerItemFromID("pinFrom") ?: null
+            val pinTo = tMapView.getMarkerItemFromID("pinTo") ?: null
+
+            val dairyRecord = DairyRecord(memberId = "test")
+            if (pinFrom == null) {
+                if (locationNow == null) {
+                    Toast.makeText(this, "출발지는 필수입니다.", 3)
+                    return@setOnClickListener
+                }
+                dairyRecord.startLocationName = "현재위치"
+                dairyRecord.startLocationLat = locationNow?.latitude
+                dairyRecord.startLocationLon = locationNow?.longitude
+            } else {
+                dairyRecord.startLocationName = pinFrom.name
+                dairyRecord.startLocationLon = pinFrom.longitude
+                dairyRecord.startLocationLat = pinFrom.latitude
+            }
+            
+            if (pinTo == null) {
+                Toast.makeText(this, "목적지는 필수입니다.", 3)
+                return@setOnClickListener
+            }
+            dairyRecord.endLocationName = pinTo.name
+            dairyRecord.endLocationLat = pinTo.latitude
+            dairyRecord.endLocationLon = pinTo.longitude
+            
+            HttpService.postRecord(this, dairyRecord)
         }
 
         // cancel 버튼
@@ -128,7 +144,7 @@ class NewDairyActivity : AppCompatActivity() {
         when (requestCode) {
             SELECT_PLACE_NOW_REQUEST_CODE -> {
                 this.addMarkerItemToView(
-                    "pinNow",
+                    "pinFrom",
                     tMapView,
                     data?.getParcelableExtra("selectedPOI"),
                     edt_new_dairy_place_now,

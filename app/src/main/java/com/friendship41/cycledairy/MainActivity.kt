@@ -15,12 +15,15 @@ import com.friendship41.cycledairy.activity.ListDairyActivity
 import com.friendship41.cycledairy.activity.NewDairyActivity
 import com.friendship41.cycledairy.activity.ParcelablePOI
 import com.friendship41.cycledairy.activity.getTMapMarker
+import com.friendship41.cycledairy.common.ADD_DAIRY_RECORD_REQUEST_CODE
 import com.friendship41.cycledairy.common.REQUEST_PERMISSION_ACCESS_FINE_LOCATION
+import com.friendship41.cycledairy.common.RESULT_CODE_SUCCESS
 import com.skt.Tmap.TMapView
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.logging.Logger
 
 class MainActivity : AppCompatActivity() {
-//    private val log = Logger.getLogger(MainActivity::class.java.name)
+    private val log = Logger.getLogger(MainActivity::class.java.name)
 
     private lateinit var tMapView: TMapView
     private var locationManager: LocationManager? = null
@@ -79,7 +82,27 @@ class MainActivity : AppCompatActivity() {
         // 작성 페이지 버튼(tv)
         tv_main_new.setOnClickListener {
             val newDairyIntent = Intent(this, NewDairyActivity::class.java)
-            startActivity(newDairyIntent)
+            startActivityForResult(newDairyIntent, ADD_DAIRY_RECORD_REQUEST_CODE)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode != RESULT_CODE_SUCCESS) {
+            log.warning("fail -> requestCode: ${requestCode}, resultCode: ${resultCode}. data: $data")
+            return
+        }
+        when (requestCode) {
+            ADD_DAIRY_RECORD_REQUEST_CODE -> {
+                val poiFrom = data?.getParcelableExtra<ParcelablePOI>("poiFrom")
+                val poiTo = data?.getParcelableExtra<ParcelablePOI>("poiTo")
+                if (poiFrom == null || poiTo == null) {
+                    log.warning("require more data: poiFrom: $poiFrom, poiTo: $poiTo")
+                    return
+                }
+                tMapView.setCenterPoint(poiFrom.lon.toDouble(), poiFrom.lat.toDouble())
+                tMapView.addMarkerItem("pinFrom", getTMapMarker(this, poiFrom, R.drawable.map_pin_red_icon, 3))
+                tMapView.addMarkerItem("pinTo", getTMapMarker(this, poiTo, R.drawable.map_pin_blue_icon, 3))
+            }
         }
     }
 
