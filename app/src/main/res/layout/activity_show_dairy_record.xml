@@ -5,7 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context=".activity.ListDairyActivity">
+        tools:context=".activity.ShowDairyRecordActivity">
 
     <LinearLayout
             android:layout_width="match_parent"
@@ -24,12 +24,11 @@
                       android:text="@string/app_name"
                       android:textSize="40sp"/>
         </LinearLayout>
-        <ListView
+        <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="9"
-                android:id="@+id/lv_list_dairy">
-        </ListView>
+                android:id="@+id/show_dairy_record_map_view"/>
     </LinearLayout>
     <LinearLayout
             android:layout_width="match_parent"
@@ -42,7 +41,7 @@
                 android:gravity="center"
                 android:text="@string/bottom_bar_cancel"
                 android:background="@color/colorCancel"
-                android:id="@+id/tv_list_dairy_cancel"
+                android:id="@+id/tv_show_dairy_cancel"
                 android:textSize="30sp"/>
     </LinearLayout>
 

@@ -76,6 +76,7 @@ class NewDairyActivity : AppCompatActivity() {
             val pinFrom = tMapView.getMarkerItemFromID("pinFrom") ?: null
             val pinTo = tMapView.getMarkerItemFromID("pinTo") ?: null
 
+            // TODO: 로그인 기능 완료 후 아이디 대입
             val dairyRecord = DairyRecord(memberId = "test")
             if (pinFrom == null) {
                 if (locationNow == null) {
@@ -99,7 +100,7 @@ class NewDairyActivity : AppCompatActivity() {
             dairyRecord.endLocationLat = pinTo.latitude
             dairyRecord.endLocationLon = pinTo.longitude
             
-            HttpService.postRecord(this, dairyRecord)
+            HttpDairyRecordService.postRecord(this, dairyRecord)
         }
 
         // cancel 버튼

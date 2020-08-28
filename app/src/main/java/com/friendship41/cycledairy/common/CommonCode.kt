@@ -15,3 +15,4 @@ const val CYCLE_DAIRY_SERVER = "http://stage41.iptime.org:41000"
 
 // URL
 const val URL_POST_DAIRY_RECORD = "/record"
+const val URL_GET_DAIRY_RECORD = "/record"
