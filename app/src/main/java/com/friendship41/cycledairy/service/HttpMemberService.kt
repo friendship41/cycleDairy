@@ -65,7 +65,6 @@ object HttpMemberService {
                 }
             }, Response.ErrorListener { error ->
                 println("error: $error")
-                context.finish()
             }
         ) {
             override fun getHeaders(): MutableMap<String, String> {
