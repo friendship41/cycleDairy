@@ -3,7 +3,9 @@ package com.friendship41.cycledairy.activity
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
+import com.friendship41.cycledairy.PreActivity
 import com.friendship41.cycledairy.R
+import com.friendship41.cycledairy.checkLogin
 import com.friendship41.cycledairy.common.*
 import kotlinx.android.synthetic.main.activity_select_place.*
 
@@ -31,5 +33,10 @@ class SelectPlaceActivity : AppCompatActivity() {
             setResult(RESULT_CODE_SUCCESS, intent)
             finish()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkLogin(this, PreActivity.prefs.getString("access_token", ""))
     }
 }

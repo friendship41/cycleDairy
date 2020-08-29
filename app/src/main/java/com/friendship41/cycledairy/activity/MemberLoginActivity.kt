@@ -2,7 +2,9 @@ package com.friendship41.cycledairy.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.friendship41.cycledairy.PreActivity
 import com.friendship41.cycledairy.R
+import com.friendship41.cycledairy.checkLogin
 import com.friendship41.cycledairy.service.HttpMemberService
 import kotlinx.android.synthetic.main.activity_member_login.*
 
@@ -18,5 +20,10 @@ class MemberLoginActivity : AppCompatActivity() {
                 edt_member_login_password.text.toString()
             )
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkLogin(this, PreActivity.prefs.getString("access_token", ""))
     }
 }

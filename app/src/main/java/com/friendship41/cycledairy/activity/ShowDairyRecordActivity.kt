@@ -3,7 +3,9 @@ package com.friendship41.cycledairy.activity
 import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.friendship41.cycledairy.PreActivity
 import com.friendship41.cycledairy.R
+import com.friendship41.cycledairy.checkLogin
 import com.friendship41.cycledairy.data.DairyRecord
 import com.skt.Tmap.TMapData
 import com.skt.Tmap.TMapPoint
@@ -40,6 +42,11 @@ class ShowDairyRecordActivity : AppCompatActivity() {
         tv_show_dairy_cancel.setOnClickListener {
             finish()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkLogin(this, PreActivity.prefs.getString("access_token", ""))
     }
 }
 

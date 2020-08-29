@@ -1,8 +1,6 @@
 package com.friendship41.cycledairy.service
 
-import android.annotation.SuppressLint
 import android.content.Intent
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Response
@@ -22,7 +20,7 @@ object HttpMemberService {
         val stringRequest = object : StringRequest(
             Method.POST,
             CYCLE_DAIRY_SERVER + URL_POST_LOGIN,
-            Response.Listener() { response ->
+            Response.Listener { response ->
                 println(response)
                 val responseToken = Gson().fromJson<ResponseToken>(response, ResponseToken::class.java)
                 when (responseToken.result) {
@@ -67,6 +65,7 @@ object HttpMemberService {
                 }
             }, Response.ErrorListener { error ->
                 println("error: $error")
+                context.finish()
             }
         ) {
             override fun getHeaders(): MutableMap<String, String> {

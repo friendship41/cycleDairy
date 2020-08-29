@@ -15,7 +15,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.friendship41.cycledairy.PreActivity
 import com.friendship41.cycledairy.R
+import com.friendship41.cycledairy.checkLogin
 import com.friendship41.cycledairy.common.*
 import com.friendship41.cycledairy.data.DairyRecord
 import com.friendship41.cycledairy.service.HttpDairyRecordService
@@ -101,7 +103,7 @@ class NewDairyActivity : AppCompatActivity() {
             dairyRecord.endLocationLat = pinTo.latitude
             dairyRecord.endLocationLon = pinTo.longitude
             
-            HttpDairyRecordService.postRecord(this, dairyRecord)
+            HttpDairyRecordService.postRecord(this, dairyRecord, PreActivity.prefs.getString("access_token", ""))
         }
 
         // cancel 버튼
@@ -134,6 +136,11 @@ class NewDairyActivity : AppCompatActivity() {
                 this,
                 SELECT_PLACE_TO_REQUEST_CODE)).start()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkLogin(this, PreActivity.prefs.getString("access_token", ""))
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

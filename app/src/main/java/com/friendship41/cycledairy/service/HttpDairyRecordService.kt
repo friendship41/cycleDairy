@@ -5,7 +5,6 @@ import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.AuthFailureError
-import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
@@ -21,7 +20,7 @@ import com.friendship41.cycledairy.data.ResponseDairyRecordList
 import com.google.gson.Gson
 
 object HttpDairyRecordService {
-    fun postRecord(context: AppCompatActivity, dairyRecord: DairyRecord) {
+    fun postRecord(context: AppCompatActivity, dairyRecord: DairyRecord, accessToken: String) {
         val stringRequest = object : StringRequest(
             Method.POST,
             CYCLE_DAIRY_SERVER + URL_POST_DAIRY_RECORD,
@@ -48,6 +47,11 @@ object HttpDairyRecordService {
                 println("error: $error")
             }
         ) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val headerMap = HashMap<String, String>()
+                headerMap.put("access_token", accessToken)
+                return headerMap
+            }
             override fun getBodyContentType(): String {
                 return "application/json"
             }
@@ -59,9 +63,9 @@ object HttpDairyRecordService {
         Volley.newRequestQueue(context).add(stringRequest)
     }
 
-    fun getRecordList(context: ListDairyActivity, memberId: String) {
-        val stringRequest = StringRequest(
-            Request.Method.GET,
+    fun getRecordList(context: ListDairyActivity, memberId: String, accessToken: String) {
+        val stringRequest = object : StringRequest(
+            Method.GET,
             "$CYCLE_DAIRY_SERVER$URL_GET_DAIRY_RECORD?returnType=list&memberId=$memberId",
             Response.Listener { response ->
                 run {
@@ -81,7 +85,13 @@ object HttpDairyRecordService {
                 println("error: $error")
                 context.finish()
             }
-        )
+        ) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val headerMap = HashMap<String, String>()
+                headerMap.put("access_token", accessToken)
+                return headerMap
+            }
+        }
         Volley.newRequestQueue(context).add(stringRequest)
     }
 }
