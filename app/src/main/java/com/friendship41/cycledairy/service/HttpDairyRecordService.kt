@@ -1,4 +1,4 @@
-package com.friendship41.cycledairy.common
+package com.friendship41.cycledairy.service
 
 import android.content.Intent
 import android.widget.ArrayAdapter
@@ -12,6 +12,10 @@ import com.android.volley.toolbox.Volley
 import com.friendship41.cycledairy.R
 import com.friendship41.cycledairy.activity.ListDairyActivity
 import com.friendship41.cycledairy.activity.ParcelablePOI
+import com.friendship41.cycledairy.common.CYCLE_DAIRY_SERVER
+import com.friendship41.cycledairy.common.RESULT_CODE_SUCCESS
+import com.friendship41.cycledairy.common.URL_GET_DAIRY_RECORD
+import com.friendship41.cycledairy.common.URL_POST_DAIRY_RECORD
 import com.friendship41.cycledairy.data.DairyRecord
 import com.friendship41.cycledairy.data.ResponseDairyRecordList
 import com.google.gson.Gson
@@ -20,7 +24,7 @@ object HttpDairyRecordService {
     fun postRecord(context: AppCompatActivity, dairyRecord: DairyRecord) {
         val stringRequest = object : StringRequest(
             Method.POST,
-            CYCLE_DAIRY_SERVER+URL_POST_DAIRY_RECORD,
+            CYCLE_DAIRY_SERVER + URL_POST_DAIRY_RECORD,
             Response.Listener { response ->
                 run {
                     println("response: $response")

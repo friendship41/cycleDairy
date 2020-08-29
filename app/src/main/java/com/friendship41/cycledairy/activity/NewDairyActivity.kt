@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat
 import com.friendship41.cycledairy.R
 import com.friendship41.cycledairy.common.*
 import com.friendship41.cycledairy.data.DairyRecord
+import com.friendship41.cycledairy.service.HttpDairyRecordService
 import com.skt.Tmap.TMapData
 import com.skt.Tmap.TMapMarkerItem
 import com.skt.Tmap.TMapPoint

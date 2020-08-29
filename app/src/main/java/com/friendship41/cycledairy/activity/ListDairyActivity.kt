@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.friendship41.cycledairy.R
-import com.friendship41.cycledairy.common.HttpDairyRecordService
+import com.friendship41.cycledairy.service.HttpDairyRecordService
 import com.friendship41.cycledairy.data.DairyRecord
 import kotlinx.android.synthetic.main.activity_list_dairy.*
 
