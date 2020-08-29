@@ -46,7 +46,8 @@ object HttpDairyRecordService {
                 }
             }, Response.ErrorListener { error ->
                 println("error: $error")
-            }) {
+            }
+        ) {
             override fun getBodyContentType(): String {
                 return "application/json"
             }

@@ -18,6 +18,7 @@ import com.friendship41.cycledairy.activity.getTMapMarker
 import com.friendship41.cycledairy.common.ADD_DAIRY_RECORD_REQUEST_CODE
 import com.friendship41.cycledairy.common.REQUEST_PERMISSION_ACCESS_FINE_LOCATION
 import com.friendship41.cycledairy.common.RESULT_CODE_SUCCESS
+import com.friendship41.cycledairy.service.HttpMemberService
 import com.skt.Tmap.TMapView
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.logging.Logger
@@ -73,7 +74,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
         // 리스트 보기 버튼(tv)
         tv_main_list.setOnClickListener {
             val listDairyIntent = Intent(this, ListDairyActivity::class.java)
@@ -84,6 +84,11 @@ class MainActivity : AppCompatActivity() {
             val newDairyIntent = Intent(this, NewDairyActivity::class.java)
             startActivityForResult(newDairyIntent, ADD_DAIRY_RECORD_REQUEST_CODE)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkLogin(this, PreActivity.prefs.getString("access_token", ""))
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -105,7 +110,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         when (requestCode) {
@@ -149,4 +153,11 @@ class MainActivity : AppCompatActivity() {
         override fun onProviderEnabled(provider: String) {}
         override fun onProviderDisabled(provider: String) {}
     }
+}
+
+fun checkLogin(context: AppCompatActivity, accessToken: String?) {
+    if (accessToken == null) {
+        return
+    }
+    HttpMemberService.checkToken(context, accessToken)
 }

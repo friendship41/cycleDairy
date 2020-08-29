@@ -9,4 +9,8 @@
     <string name="new_dairy_place_now">출발지</string>
     <string name="new_dairy_place_to">목적지</string>
     <string name="new_dairy_search">검색</string>
+
+    <string name="member_login_id">ID</string>
+    <string name="member_login_password">PASSWORD</string>
+    <string name="member_login_login">Login</string>
 </resources>
